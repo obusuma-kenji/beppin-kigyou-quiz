@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>べっぴん起業 理解度チェッククイズ | 藤井麗子</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink-50: #FBEAF0;
+    --pink-100: #F4C0D1;
+    --pink-400: #D4537E;
+    --pink-600: #993556;
+    --pink-800: #72243E;
+    --teal-50: #E1F5EE;
+    --teal-400: #5DCAA5;
+    --teal-800: #085041;
+    --red-50: #FCEBEB;
+    --red-400: #F09595;
+    --red-800: #791F1F;
+    --gray-50: #F7F5F0;
+    --gray-100: #EDE9E0;
+    --gray-200: #D6D1C4;
+    --gray-600: #7A7568;
+    --gray-800: #3A3830;
+    --white: #FFFFFF;
+    --serif: 'Noto Serif JP', serif;
+    --sans: 'Noto Sans JP', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--gray-50);
+    color: var(--gray-800);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .page {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .site-header .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--pink-600);
+    font-weight: 500;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .site-header h1 {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--pink-800);
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+  .site-header .subtitle {
+    font-size: 13px;
+    color: var(--gray-600);
+  }
+
+  /* ── Quiz card ── */
+  .quiz-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 16px;
+    padding: 2rem 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  /* ── Progress ── */
+  .progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .q-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--pink-600);
+    letter-spacing: 0.1em;
+  }
+  .q-counter {
+    font-size: 12px;
+    color: var(--gray-600);
+  }
+  .progress-track {
+    background: var(--pink-100);
+    border-radius: 99px;
+    height: 5px;
+    margin-bottom: 1.75rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background: var(--pink-400);
+    height: 5px;
+    border-radius: 99px;
+    transition: width 0.45s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ── Question ── */
+  .q-text {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.75;
+    color: var(--gray-800);
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── Choices ── */
+  .choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  @media (max-width: 480px) {
+    .choices { grid-template-columns: 1fr; }
+  }
+
+  .choice-btn {
+    background: var(--gray-50);
+    border: 1.5px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 13px 14px;
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--gray-800);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  }
+  .choice-btn:hover:not(:disabled) {
+    background: var(--pink-50);
+    border-color: var(--pink-100);
+    transform: translateY(-1px);
+  }
+  .choice-btn:active:not(:disabled) { transform: translateY(0); }
+  .choice-btn .choice-mark {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--pink-400);
+    margin-right: 6px;
+    min-width: 16px;
+  }
+
+  .choice-btn.correct {
+    background: var(--teal-50);
+    border-color: var(--teal-400);
+    color: var(--teal-800);
+  }
+  .choice-btn.correct .choice-mark { color: var(--teal-400); }
+  .choice-btn.wrong {
+    background: var(--red-50);
+    border-color: var(--red-400);
+    color: var(--red-800);
+  }
+  .choice-btn.wrong .choice-mark { color: var(--red-400); }
+  .choice-btn.dimmed {
+    opacity: 0.45;
+  }
+  .choice-btn:disabled { cursor: default; }
+
+  /* ── Explanation ── */
+  .explain-box {
+    display: none;
+    border-left: 3px solid var(--teal-400);
+    background: var(--teal-50);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--teal-800);
+    margin-bottom: 1.25rem;
+    animation: fadeIn 0.3s ease;
+  }
+  .explain-box.wrong-explain {
+    border-left-color: var(--red-400);
+    background: var(--red-50);
+    color: var(--red-800);
+  }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+
+  /* ── Next button ── */
+  .next-btn {
+    display: none;
+    width: 100%;
+    background: var(--pink-400);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .next-btn:hover { background: var(--pink-600); }
+  .next-btn:active { transform: scale(0.99); }
+
+  /* ── Result ── */
+  .result-wrap { display: none; }
+
+  .result-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 16px;
+    padding: 2.25rem 1.75rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .result-badge {
+    display: inline-block;
+    background: var(--pink-50);
+    color: var(--pink-800);
+    border: 1px solid var(--pink-100);
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 5px 16px;
+    margin-bottom: 1rem;
+  }
+
+  .result-score-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .result-score-num {
+    font-family: var(--serif);
+    font-size: 64px;
+    font-weight: 600;
+    color: var(--pink-400);
+    line-height: 1;
+  }
+  .result-score-denom {
+    font-size: 22px;
+    color: var(--gray-600);
+    font-weight: 400;
+  }
+  .result-score-unit {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin-bottom: 1rem;
+  }
+  .result-stars {
+    font-size: 22px;
+    letter-spacing: 4px;
+    margin-bottom: 1rem;
+    color: var(--pink-400);
+  }
+  .result-rank {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--pink-800);
+    margin-bottom: 10px;
+  }
+  .result-msg {
+    font-size: 14px;
+    color: var(--gray-600);
+    line-height: 1.85;
+    margin-bottom: 1.5rem;
+    white-space: pre-wrap;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1.75rem;
+  }
+  .stat-box {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 14px 8px;
+  }
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--gray-800);
+  }
+  .stat-lbl {
+    font-size: 11px;
+    color: var(--gray-600);
+    margin-top: 3px;
+    font-weight: 500;
+  }
+
+  /* ── Share box ── */
+  .share-box {
+    background: var(--pink-50);
+    border: 1px solid var(--pink-100);
+    border-radius: 12px;
+    padding: 1.25rem 1.25rem 1rem;
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+  .share-box-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--pink-600);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .share-text-area {
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.85;
+    color: var(--pink-800);
+    white-space: pre-wrap;
+    margin-bottom: 12px;
+    background: var(--white);
+    border: 1px solid var(--pink-100);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .share-btns {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .copy-btn {
+    background: var(--pink-400);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .copy-btn:hover { background: var(--pink-600); }
+
+  .retry-btn {
+    background: transparent;
+    color: var(--gray-600);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .retry-btn:hover { background: var(--gray-100); }
+
+  /* ── Amazon button ── */
+  .amazon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    background: #FF9900;
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    padding: 15px 20px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    margin-top: 0;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .amazon-btn:hover { background: #e88a00; }
+  .amazon-btn:active { transform: scale(0.99); }
+  .amazon-btn .amazon-logo {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    background: #111;
+    color: #FF9900;
+    border-radius: 4px;
+    padding: 2px 7px;
+    flex-shrink: 0;
+  }
+  .amazon-wrap {
+    margin-top: 12px;
+    padding: 0 0 4px;
+  }
+  .amazon-caption {
+    text-align: center;
+    font-size: 11px;
+    color: var(--gray-600);
+    margin-top: 7px;
+  }
+
+  /* ── Footer ── */
+  .site-footer {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 11px;
+    color: var(--gray-600);
+    line-height: 1.8;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="site-header">
+    <div class="eyebrow">Book Quiz</div>
+    <h1>べっぴん起業<br>理解度チェッククイズ</h1>
+    <p class="subtitle">藤井麗子『経験を価値に変えるべっぴん起業』</p>
+  </header>
+
+  <!-- Quiz -->
+  <div id="quiz-wrap">
+    <div class="quiz-card">
+      <div class="progress-header">
+        <span class="q-label" id="q-label">Q 1</span>
+        <span class="q-counter" id="q-counter">1 / 10</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="prog" style="width:0%"></div>
+      </div>
+      <div class="q-text" id="q-text"></div>
+      <div class="choices" id="choices"></div>
+      <div class="explain-box" id="explain"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQ()">次の問題へ →</button>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-wrap" id="result-wrap">
+    <div class="result-card">
+      <div class="result-badge">QUIZ RESULT</div>
+      <div class="result-score-row">
+        <span class="result-score-num" id="r-score"></span>
+        <span class="result-score-denom">/ 10</span>
+      </div>
+      <div class="result-score-unit">問正解</div>
+      <div class="result-stars" id="r-stars"></div>
+      <div class="result-rank" id="r-rank"></div>
+      <div class="result-msg" id="r-msg"></div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-num" id="r-correct"></div><div class="stat-lbl">正解数</div></div>
+        <div class="stat-box"><div class="stat-num" id="r-wrong"></div><div class="stat-lbl">不正解数</div></div>
+        <div class="stat-box"><div class="stat-num" id="r-pct"></div><div class="stat-lbl">正解率</div></div>
+      </div>
+      <div class="amazon-wrap">
+        <a class="amazon-btn" href="https://www.amazon.co.jp/dp/B0GGVXFK3G" target="_blank" rel="noopener">
+          <span class="amazon-logo">amazon</span>
+          『べっぴん起業』を Amazon で読む
+        </a>
+        <div class="amazon-caption">Kindle版で今すぐ読めます</div>
+      </div>
+    </div>
+
+    <div class="share-box">
+      <div class="share-box-label">SNS シェア用テキスト</div>
+      <div class="share-text-area" id="share-text"></div>
+      <div class="share-btns">
+        <button class="copy-btn" id="copy-btn" onclick="copyShare()">テキストをコピー</button>
+        <button class="retry-btn" onclick="retryQuiz()">もう一度挑戦する</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    &copy; 藤井麗子 / べっぴん起業
+  </footer>
+</div>
+
+<script>
+const qs = [
+  {
+    q: "藤井麗子さんが提唱する『べっぴん起業』とは、どのような起業スタイルのことですか？",
+    choices: ["若い女性向けの美容・ファッション系起業", "自分の経験を価値に変え、本物の信頼で広がる起業", "広告費を大量に使って一気に集客する起業", "資金調達を優先してスケールを目指す起業"],
+    ans: 1,
+    exp: "『べっぴん起業』とは、自分の人生経験をそのまま価値に変え、売り込まなくても信頼と紹介で仕事が広がるスタイルのこと。「べっぴん」は外見ではなく、本物の輝きを指しています。"
+  },
+  {
+    q: "本書で「広告より強い」と表現されているものは何ですか？",
+    choices: ["SNSのフォロワー数", "口コミサイトの評価", "一冊の本（出版ブランディング）", "動画コンテンツ"],
+    ans: 2,
+    exp: "一冊の本は著者の専門性・信頼性・人柄を一度に伝えられるため、広告より強いブランディングツールとして機能します。読者は本を読むことで深い信頼を持ちます。"
+  },
+  {
+    q: "藤井さんが「出版ブランディング」で最も重視していることはどれですか？",
+    choices: ["ベストセラーを狙って部数を伸ばすこと", "有名出版社から出版すること", "自分の経験・思想を専門家としてのポジションで伝えること", "電子書籍で低コストに出版すること"],
+    ans: 2,
+    exp: "出版ブランディングの核心は、あなただけの経験と考えを整理し、専門家としてのポジションを確立することです。部数や媒体より「何を伝えるか」が重要です。"
+  },
+  {
+    q: "本書が主なターゲットとしている読者はどのような人ですか？",
+    choices: ["20代の就活生", "大企業の経営幹部", "自分の経験を活かして起業・ビジネスを広げたい女性", "IT系スタートアップの創業者"],
+    ans: 2,
+    exp: "本書は主に、これまでの人生経験・仕事の積み重ねを活かして、自分らしい形で再び輝きたいと思っている女性を対象にしています。"
+  },
+  {
+    q: "藤井さんが語る「本が橋になる」という表現の意味として最も適切なのは？",
+    choices: ["本は図書館で借りられるので集客の橋渡しになる", "本を通じて著者と読者の間に信頼のつながりが生まれる", "出版社とのネットワークが広がる", "Amazonのランキングで認知度が上がる"],
+    ans: 1,
+    exp: "本は著者の経験・想いを丁寧に伝えられるメディア。読者は本を読み終えたとき「この人に会いたい・頼みたい」と感じます。これが「信頼の橋」です。"
+  },
+  {
+    q: "本書で紹介される「紹介が広がる」仕組みの出発点として挙げられているのは？",
+    choices: ["積極的な飛び込み営業", "SNSでのバズ投稿", "本を通じた専門家としての信頼形成", "テレビ出演による知名度アップ"],
+    ans: 2,
+    exp: "売り込まなくても「この人に頼みたい」と思われるには、まず信頼が必要です。本はその信頼を丁寧に積み上げる最強ツールであり、そこから自然な紹介が生まれます。"
+  },
+  {
+    q: "藤井さんが「あなたの経験は価値になる」と伝える理由として最も適切なのはどれですか？",
+    choices: ["経験が多い人は資格試験に有利だから", "同じ悩みを持つ人にとって、あなたの経験が地図になるから", "業界歴が長いほど単価を上げられるから", "過去の経歴が就職市場で評価されるから"],
+    ans: 1,
+    exp: "あなたが通ってきた遠回りや失敗・気づきは、今まさに同じ悩みを抱える人の「地図」になります。経験の量より、その経験の「解像度」が価値を生みます。"
+  },
+  {
+    q: "本書で出版テーマを決める際に最も大切だとされているのは何ですか？",
+    choices: ["市場の需要調査を徹底すること", "流行りのトピックに乗ること", "自分の経験・強み・想いを棚卸しして整理すること", "編集者に任せてテーマを決めてもらうこと"],
+    ans: 2,
+    exp: "出版テーマの核心は「自分の棚卸し」です。何を経験し、何を乗り越え、何を伝えたいか——その整理こそが、他の誰にも書けない本をつくる出発点です。"
+  },
+  {
+    q: "「再び輝く時」というフレーズが伝えたいこととして最も近いのは？",
+    choices: ["若い頃の輝きを取り戻すための美容法", "過去の成功体験をそのまま繰り返すこと", "経験を積んだ今だからこそ、本物の価値を発揮できる", "定年後の第二の人生を楽しむライフスタイル"],
+    ans: 2,
+    exp: "「再び輝く」とは、若さへの回帰ではなく、積み重ねた経験・失敗・知恵が武器になる今この瞬間から輝き出すこと。経験値が高いほど、発揮できる価値も大きくなります。"
+  },
+  {
+    q: "本書の著者・藤井麗子さんが読者に最終的に伝えたいメッセージはどれですか？",
+    choices: ["有名出版社から本を出すことがゴール", "売れる本の書き方を学んでベストセラー作家を目指すこと", "自分らしい働き方で、売り込まなくても選ばれ続けるビジネスをつくること", "広告やSNSを駆使して短期間で集客すること"],
+    ans: 2,
+    exp: "本書全体を通じたメッセージは「あなたの経験を価値に変えて、あなたらしく輝いてほしい」。売り込まなくても信頼と紹介で選ばれ続ける——それがべっぴん起業の本質です。"
+  }
+];
+
+let cur = 0, score = 0, answered = false;
+const MARKS = ['A', 'B', 'C', 'D'];
+
+function render() {
+  const q = qs[cur];
+  document.getElementById('q-label').textContent = 'Q ' + (cur + 1);
+  document.getElementById('q-counter').textContent = (cur + 1) + ' / ' + qs.length;
+  document.getElementById('prog').style.width = (cur / qs.length * 100) + '%';
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('explain').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+
+  const c = document.getElementById('choices');
+  c.innerHTML = '';
+  q.choices.forEach((ch, i) => {
+    const b = document.createElement('button');
+    b.className = 'choice-btn';
+    b.innerHTML = '<span class="choice-mark">' + MARKS[i] + '</span>' + ch;
+    b.onclick = () => answer(i);
+    c.appendChild(b);
+  });
+}
+
+function answer(i) {
+  if (answered) return;
+  answered = true;
+  const q = qs[cur];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach((b, idx) => {
+    b.disabled = true;
+    if (idx === q.ans) b.classList.add('correct');
+    else if (idx === i && i !== q.ans) b.classList.add('wrong');
+    else b.classList.add('dimmed');
+  });
+  if (i === q.ans) score++;
+  const ex = document.getElementById('explain');
+  ex.textContent = (i === q.ans ? '✓ 正解！  ' : '✗ 不正解  ') + q.exp;
+  ex.className = 'explain-box' + (i !== q.ans ? ' wrong-explain' : '');
+  ex.style.display = 'block';
+  const nb = document.getElementById('next-btn');
+  nb.style.display = 'block';
+  nb.textContent = cur < qs.length - 1 ? '次の問題へ →' : '結果を見る →';
+}
+
+function nextQ() {
+  cur++;
+  if (cur >= qs.length) { showResult(); return; }
+  render();
+}
+
+function showResult() {
+  document.getElementById('quiz-wrap').style.display = 'none';
+  document.getElementById('result-wrap').style.display = 'block';
+  const pct = Math.round(score / qs.length * 100);
+  document.getElementById('r-score').textContent = score;
+  document.getElementById('r-correct').textContent = score;
+  document.getElementById('r-wrong').textContent = qs.length - score;
+  document.getElementById('r-pct').textContent = pct + '%';
+
+  const filled = Math.round(score / 2);
+  document.getElementById('r-stars').textContent = '★'.repeat(filled) + '☆'.repeat(5 - filled);
+
+  let rank, msg;
+  if (score === 10) {
+    rank = 'べっぴん起業 マスター！';
+    msg = '満点おめでとうございます！\n藤井麗子さんの哲学を完全に理解されています。\nあなたの番です——今すぐ一冊書きましょう！';
+  } else if (score >= 8) {
+    rank = 'べっぴん起業 エキスパート';
+    msg = '素晴らしい理解度です！\n本の核心をしっかりつかんでいます。\nあとは行動するだけ——経験を本にする一歩を踏み出して。';
+  } else if (score >= 6) {
+    rank = 'べっぴん起業 実践者';
+    msg = '基本はバッチリ！\n出版ブランディングの考え方が身についています。\n本書を読み返して、さらに理解を深めてみましょう。';
+  } else if (score >= 4) {
+    rank = 'べっぴん起業 学習中';
+    msg = 'もう少しで核心に届きます！\n「経験が価値になる」という視点を大切に、\nぜひ本書をじっくり読み返してみてください。';
+  } else {
+    rank = 'べっぴん起業 入門編';
+    msg = 'これから深めていきましょう！\n藤井麗子さんの『べっぴん起業』は、\n読めば読むほど発見がある一冊です。まずは第1章から！';
+  }
+  document.getElementById('r-rank').textContent = rank;
+  document.getElementById('r-msg').textContent = msg;
+
+  const stars = '★'.repeat(filled) + '☆'.repeat(5 - filled);
+  document.getElementById('share-text').textContent =
+    '📚 べっぴん起業 理解度クイズ\n\n' + stars + '\n' +
+    score + '/10問 正解（正解率' + pct + '%）\n「' + rank + '」\n\n' +
+    '藤井麗子『経験を価値に変える べっぴん起業』\n広告より強い一冊の本で、信頼と紹介が広がる出版ブランディング。\n\n' +
+    '#べっぴん起業 #藤井麗子 #出版ブランディング #女性起業';
+}
+
+function copyShare() {
+  const t = document.getElementById('share-text').textContent;
+  navigator.clipboard.writeText(t).then(() => {
+    const b = document.getElementById('copy-btn');
+    b.textContent = 'コピーしました！';
+    setTimeout(() => b.textContent = 'テキストをコピー', 2000);
+  });
+}
+
+function retryQuiz() {
+  cur = 0; score = 0; answered = false;
+  document.getElementById('result-wrap').style.display = 'none';
+  document.getElementById('quiz-wrap').style.display = 'block';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
